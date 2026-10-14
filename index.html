@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8f5" />
+    <meta name="description" content="A calm, simple way to split expenses with friends." />
+    <title>Paysplit — expenses, without the awkwardness</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="Paysplit home">
+          <span class="brand-mark">P</span>
+          <span>Paysplit</span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <button class="nav-item active" data-view="overview"><span class="nav-icon">⌂</span> Overview</button>
+          <button class="nav-item" data-view="expenses"><span class="nav-icon">↗</span> Expenses</button>
+          <button class="nav-item" data-view="settle"><span class="nav-icon">✓</span> Settle up</button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-tip">
+            <span class="tip-spark">✦</span>
+            <strong>Keep it simple</strong>
+            <p>Add expenses as they happen. Future-you will thank you.</p>
+          </div>
+          <button class="profile">
+            <span class="avatar avatar-you">YOU</span>
+            <span><strong>You</strong><small>Personal account</small></span>
+            <span class="more">···</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="mobile-brand"><span class="brand-mark">P</span><strong>Paysplit</strong></div>
+          <div class="topbar-actions">
+            <button class="icon-button" aria-label="Notifications">♧<span class="notification-dot"></span></button>
+            <button class="avatar avatar-you top-avatar" aria-label="Open profile">YOU</button>
+          </div>
+        </header>
+
+        <div class="content-wrap">
+          <section class="page-heading">
+            <div>
+              <p class="eyebrow">Tuesday, October 14, 2026</p>
+              <h1>Good evening, you <span class="wave">✦</span></h1>
+              <p class="subheading">Here’s the money picture with your people.</p>
+            </div>
+            <button class="primary-button add-expense-button"><span>＋</span> Add expense</button>
+          </section>
+
+          <section class="summary-grid" aria-label="Balance summary">
+            <article class="summary-card balance-card">
+              <div class="card-topline"><span class="card-label">Your balance</span><span class="status-pill positive">You’re owed</span></div>
+              <strong class="summary-value" id="total-balance">₹0.00</strong>
+              <p class="summary-note" id="balance-note">Create a group to get started</p>
+              <div class="balance-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            </article>
+            <article class="summary-card balance-summary-clickable" id="you-owe-card" tabindex="0" role="button" aria-label="See who you owe">
+              <div class="card-topline"><span class="card-label">You owe</span><span class="mini-icon orange">↘</span></div>
+              <strong class="summary-value dark" id="you-owe">₹0.00</strong>
+              <p class="summary-note" id="owe-note">to 0 people</p>
+              <div class="person-stack" id="owe-people"></div>
+            </article>
+            <article class="summary-card balance-summary-clickable" id="owed-to-you-card" tabindex="0" role="button" aria-label="See who owes you">
+              <div class="card-topline"><span class="card-label">Owed to you</span><span class="mini-icon green">↗</span></div>
+              <strong class="summary-value dark" id="owed-to-you">₹0.00</strong>
+              <p class="summary-note" id="owed-note">from 0 people</p>
+              <div class="person-stack" id="owed-people"></div>
+            </article>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="panel activity-panel">
+              <div class="section-heading">
+                <div><h2>Recent activity</h2><p>What’s happening across your groups</p></div>
+                <button class="text-button" data-view="expenses">View all <span>→</span></button>
+              </div>
+              <div class="activity-list" id="activity-list"></div>
+            </section>
+
+            <section class="panel groups-panel">
+              <div class="section-heading"><div><h2>Your groups</h2><p>Tap a group to see the details</p></div><button class="round-add" aria-label="Add group">＋</button></div>
+              <div class="group-list" id="group-list"></div>
+              <button class="outline-button" id="create-group-button">＋ Create a new group</button>
+            </section>
+          </div>
+
+          <section class="panel settle-banner">
+            <div class="settle-illustration"><span>₹</span><span>↗</span><span>✓</span></div>
+            <div><h2>Who owes whom?</h2><p>Every outstanding balance, in one place.</p></div>
+            <button class="secondary-button" data-view="settle">See who to pay <span>→</span></button>
+          </section>
+          <section class="panel settlement-panel" id="settlement-panel"></section>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="expense-modal" aria-hidden="true">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="modal-close" aria-label="Close">×</button>
+        <div class="modal-header"><span class="modal-kicker">NEW EXPENSE</span><h2 id="modal-title">What did you spend on?</h2><p>We’ll split it fairly between the group.</p></div>
+        <form id="expense-form">
+          <label>Description<input name="description" type="text" placeholder="e.g. Dinner at Mizu" required /></label>
+          <div class="form-row"><label>Amount<div class="amount-input"><span>₹</span><input name="amount" type="number" min="1" step="0.01" placeholder="0.00" required /></div></label><label>Group<select name="group" id="expense-group" required></select></label></div>
+          <label>Paid by<select name="paidBy" id="expense-paid-by" required></select></label>
+          <div class="split-preview"><span class="preview-icon">↗</span><span><strong>Split equally</strong><small id="split-members">Choose a group</small></span><strong id="per-person">₹0.00 each</strong></div>
+          <button class="primary-button full-width" type="submit">Add expense <span>→</span></button>
+        </form>
+      </section>
+    </div>
+    <div class="modal-backdrop" id="group-modal" aria-hidden="true">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="group-modal-title">
+        <button class="modal-close" aria-label="Close">×</button>
+        <div class="modal-header"><span class="modal-kicker">GROUP</span><h2 id="group-modal-title">Who are you splitting with?</h2><p id="group-modal-description">Create a group and add everyone who shares expenses.</p></div>
+        <form id="group-form">
+          <label>Group name<input name="name" type="text" placeholder="e.g. Summer trip" required /></label>
+          <label>Members <small class="field-help">Add names one at a time. You are included automatically.</small><div class="member-entry"><input id="member-name" type="text" placeholder="e.g. Jamie" /><button type="button" id="add-member">Add</button></div></label>
+          <div class="member-chips" id="member-chips"></div>
+          <div class="modal-actions"><button class="danger-button" id="delete-group-button" type="button" hidden>Delete group</button><button class="primary-button" id="group-submit-button" type="submit">Create group <span>→</span></button></div>
+        </form>
+      </section>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
